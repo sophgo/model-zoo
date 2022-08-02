@@ -17,7 +17,7 @@ YOLOv5 rocket is a family of object detection architectures and models pretraine
 
 |Model              |Download                            |mAP                |
 |-------------------|:-----------------------------------|:------------------|
-|yolov5s            [14.1 MB](yolov5s-4.0-640384_jit.pt) |51.2               |
+|yolov5s            |[14.1 MB](yolov5s-4.0-640384_jit.pt)|51.2               |
 
 ## Dataset
 [COCO 2017 dataset](http://cocodataset.org) by Microsoft.
