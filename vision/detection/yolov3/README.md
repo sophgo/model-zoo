@@ -1,24 +1,23 @@
 <!--- SPDX-License-Identifier: MIT -->
 
-# Tiny YOLOv3
+# YOLOv3
 
 ## Description
-This model is a neural network for real-time object detection that detects 80 different classes. It is very fast and accurate. It is a smaller version of YOLOv3 model.
+This model is a neural network for real-time object detection that detects 80 different classes. It is very fast and accurate. 
 
 ## Model
 
-|Model        |Download  |Download (with sample test data)|mAP |
-|-------------|:--------------|:--------------|:--------------|
-|Tiny YOLOv3       |[34 MB](model/tiny-yolov3-11.onnx) |[33 MB](model/tiny-yolov3-11.tar.gz)|0.331 |
+|Model        |Download  |mAP |
+|-------------|:--------------|:--------------|
+|YOLOv3       |[119 MB](yolov3_jit.pt) |0.630 |
 
 
 ## Dataset (Train and validation)
-We use pretrained weights from pjreddie.com [here](https://pjreddie.com/media/files/yolov3-tiny.weights).
+We use pretrained weights from github [here](https://github.com/ultralytics/yolov3/releases/download/v9.6.0/yolov3.pt)
 
 
 ## References
-* This model is converted from a keras model [repository](https://github.com/qqwweee/keras-yolo3) using keras2onnx converter [repository](https://github.com/onnx/keras-onnx).
-* https://github.com/onnx/models
+* This model is converted from a Ultralytics model [repository](https://github.com/ultralytics/yolov3)
 
 ## License
 MIT License
