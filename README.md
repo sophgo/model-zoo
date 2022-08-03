@@ -14,3 +14,17 @@ To download all models:
 ## Usage - Model visualization
 
 You can see visualizations of each model's network architecture by using [Netron](https://github.com/lutzroeder/Netron).
+
+## How to contribute
+
+Please lint in your local repo before PR.
+
+```bash
+# Install tools
+sudo npm install -g markdownlint-cli
+pip3 install yamllint
+
+yamllint -c ./.yaml-lint.yml .
+markdownlint '**/*.md'
+python3 .github/workflows/check.py
+```

@@ -122,7 +122,21 @@ def link_markdown(path):
     should_have_one_table_in_model_chapter(path, lines)
     table_should_be_aligned(path, lines)
 
+def leaf_dir_should_have_readme(path):
+    has_readme = False
+    has_child = False
+    for fn in os.listdir(path):
+        sub = os.path.join(path, fn)
+        if os.path.isdir(sub):
+            has_child = True
+            leaf_dir_should_have_readme(sub)
+        elif os.path.isfile(sub) and fn.endswith('.md'):
+            has_readme = True
+    assert has_child or has_readme, \
+        f'Please provide a README.md in {path}'
+
 def lint_markdowns(path):
+    leaf_dir_should_have_readme(path)
     for fn in walk(path):
         if not fn.endswith('.md'):
             continue
