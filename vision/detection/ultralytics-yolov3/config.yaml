@@ -1,3 +1,4 @@
+---
 
 name: dahua_yolov3
 gops: [1.517254]
@@ -25,7 +26,7 @@ cali:
 int8_model: $(workdir)/$(name)_bmnetp_deploy_int8_unique_top.prototxt
 int8_weight: $(workdir)/$(name)_bmnetp.int8umodel
 
-bmnetu_batch_sizes: [1,4]    
+bmnetu_batch_sizes: [1, 4]
 bmnetu_options:
   --model $(int8_model)
   --weight $(int8_weight)
