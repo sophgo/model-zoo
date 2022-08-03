@@ -1,0 +1,3 @@
+
+# Dataset path for MLIR
+imagenet2012_mlir_cali_set: $(root)/dataset/ILSVRC2012
