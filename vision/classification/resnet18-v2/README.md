@@ -2,10 +2,6 @@
 
 # ResNet18-v2
 
-## Model From
-
-<https://github.com/onnx/models/blob/main/vision/classification/resnet/model/resnet18-v2-7.onnx>
-
 ## Description
 
 Deeper neural networks are more difficult to train. Residual learning framework
@@ -37,7 +33,8 @@ layers — 8× deeper than VGG nets but still having lower complexity.
   [Gluon model zoo](https://cv.gluon.ai/model_zoo/index.html),
   [GluonCV](https://gluon-cv.mxnet.io)
 * [Intel® Neural Compressor](https://github.com/intel/neural-compressor)
-* [https://github.com/onnx/models](https://github.com/onnx/models/tree/main/vision/classification/resnet)
+* [onnx/models](https://github.com/onnx/models/tree/main/vision/classification/resnet)
+* [resnet18-v2-7.onnx](https://github.com/onnx/models/blob/main/vision/classification/resnet/model/resnet18-v2-7.onnx)
 
 ## Contributors
 

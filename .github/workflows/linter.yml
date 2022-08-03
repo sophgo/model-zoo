@@ -60,3 +60,9 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
+
+  markdown-content-vetting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: python3 .github/workflows/check.py

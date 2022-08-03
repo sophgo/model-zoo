@@ -6,7 +6,7 @@
 
 SSD trained from coco resized to 1200x1200 by ©MLCommons.
 
-# Model
+## Model
 
 |Model              |Download                           |mAP                |
 |-------------------|:----------------------------------|:------------------|

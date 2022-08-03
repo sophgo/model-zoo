@@ -14,7 +14,7 @@ YOLOv3 model.
 |-------------------|:------------------------------|:------|
 |Tiny YOLOv3        |[34 MB](tiny-yolov3-11.onnx)   |0.331  |
 
-## Dataset (Train and validation)
+## Dataset
 
 We use pretrained weights from pjreddie.com [here](https://pjreddie.com/media/files/yolov3-tiny.weights).
 
