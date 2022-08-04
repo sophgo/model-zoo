@@ -9,10 +9,10 @@ the COCO dataset by [Ultralytics](https://ultralytics.com/).
 
 ## Model
 
-|Model              |Download                               |mAP                |
-|-------------------|:--------------------------------------|:------------------|
-|yolov5s            |[28 MB](yolov5s.onnx)                  |56.8               |
-|yolov5s            |[14.1 MB](yolov5s-4.0-640384_jit.pt)   |51.2               |
+|Model                |Download                              |Shape(hw)     |mAP                |
+|---------------------|:-------------------------------------|:-------------|:------------------|
+|yolov5s(onnx)        |[28 MB](yolov5s.onnx)                 |640 640       |56.8               |
+|yolov5s-4.0(pytorch) |[14.1 MB](yolov5s-4.0-640384_jit.pt)  |640 384       |51.2               |
 
 ## Dataset
 

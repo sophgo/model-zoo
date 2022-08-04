@@ -15,11 +15,12 @@ different classes. It is very fast and accurate.
 
 ## Dataset
 
-We use pretrained weights from github [here](https://github.com/ultralytics/yolov3/releases/download/v9.6.0/yolov3.pt)
+We use coco dataset [here](http://images.cocodataset.org/zips/val2017.zip)
 
 ## References
 
 * This model is converted from a Ultralytics model [repository](https://github.com/ultralytics/yolov3)
+* We use pretrained weights from github [here](https://github.com/ultralytics/yolov3/releases/download/v9.6.0/yolov3.pt)
 
 ## License
 
