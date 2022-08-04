@@ -1,13 +1,13 @@
 ---
 
-name: resnet18-v2
+name: mobilenet-v2
 
-gops: 3.635574248
+gops: 0.867477920
 
 mlir_transform:
   model_transform.py
     --model_name $(name)
-    --model_def $(home)/resnet18-v2-7.onnx
+    --model_def $(home)/mobilenetv2-7.onnx
     --test_input $(root)/dataset/samples/cat.jpg
     --input_shapes [[1,3,224,224]]
     --resize_dims 256,256
@@ -30,8 +30,8 @@ deploy:
       --chip bm1684x
       --test_input $(workdir)/$(name)_in_f32.npz
       --test_reference $(name)_top_outputs.npz
-      --tolerance 0.97,0.79
-      --correctness 0.99,0.89
+      --tolerance 0.93,0.64
+      --correctness 0.98,0.82
       --model $(workdir)/$(name)_bm1684x_int8_sym.bmodel
   - model_deploy.py --mlir $(workdir)/transformed.mlir
       --quantize INT8
@@ -40,6 +40,6 @@ deploy:
       --chip bm1684x
       --test_input $(workdir)/$(name)_in_f32.npz
       --test_reference $(name)_top_outputs.npz
-      --tolerance 0.98,0.80
-      --correctness 0.99,0.90
+      --tolerance 0.87,0.47
+      --correctness 0.99,0.96
       --model $(workdir)/$(name)_bm1684x_int8_sym.bmodel
