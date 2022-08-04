@@ -136,7 +136,7 @@ def leaf_dir_should_have_readme(path):
         f'Please provide a README.md in {path}'
 
 def lint_markdowns(path):
-    leaf_dir_should_have_readme(path)
+    #leaf_dir_should_have_readme(path)
     for fn in walk(path):
         if not fn.endswith('.md'):
             continue
