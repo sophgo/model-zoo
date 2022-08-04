@@ -2,14 +2,17 @@
 
 name: mobilenet-v2
 
-gops: 0.867477920
+gops: [0.867477920, 3.46991168]
+shapes:
+  - [1, 3, 224, 224]
+  - [4, 3, 224, 224]
 
 mlir_transform:
   model_transform.py
     --model_name $(name)
     --model_def $(home)/mobilenetv2-7.onnx
     --test_input $(root)/dataset/samples/cat.jpg
-    --input_shapes [[1,3,224,224]]
+    --input_shapes [$(shape_param)]
     --resize_dims 256,256
     --mean 123.675,116.28,103.53
     --scale 0.0171,0.0175,0.0174
@@ -24,6 +27,13 @@ mlir_calibration:
     -o $(workdir)/$(name).calitable
 
 deploy:
+  - model_deploy.py  --mlir $(workdir)/transformed.mlir
+      --quantize F32
+      --chip bm1684x
+      --test_input $(workdir)/$(name)_in_f32.npz
+      --test_reference $(name)_top_outputs.npz
+      --tolerance 0.99,0.99
+      --model $(workdir)/$(name)_bm1684x_f32.bmodel
   - model_deploy.py --mlir $(workdir)/transformed.mlir
       --quantize INT8
       --calibration_table $(workdir)/$(name).calitable
@@ -42,4 +52,4 @@ deploy:
       --test_reference $(name)_top_outputs.npz
       --tolerance 0.87,0.47
       --correctness 0.99,0.96
-      --model $(workdir)/$(name)_bm1684x_int8_sym.bmodel
+      --model $(workdir)/$(name)_bm1684x_int8_asym.bmodel

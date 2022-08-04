@@ -55,4 +55,4 @@ harness:
     - name: FP32
       bmodel: $(workdir)/1b.fp32.compilation/compilation.bmodel
     - name: INT8
-      bmodel: $(workdir)/1b.compilation/compilation.bmodel 
+      bmodel: $(workdir)/1b.compilation/compilation.bmodel

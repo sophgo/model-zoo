@@ -2,3 +2,4 @@
 
 # Dataset path for MLIR
 imagenet2012_mlir_cali_set: $(root)/dataset/ILSVRC2012
+coco2017_mlir_cali_set: $(root)/dataset/COCO2017
