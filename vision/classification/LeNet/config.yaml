@@ -1,0 +1,41 @@
+---
+
+name: lenet
+gops: 0.004
+
+model: $(home)/lenet.prototxt
+weight: $(home)/lenet_iter_10000.caffemodel
+int8_model: $(workdir)/$(name)_bmnetc_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmnetc.int8umodel
+
+fp32_compile_options:
+  bmnetc
+  --model $(model)
+  --weight $(weight)
+  --shapes [64,1,28,28]
+  --target BM1684X
+  --opt 1
+  --cmp 1
+
+time_only_cali:
+  python3 -m ufw.cali.cali_model
+    --model $(model)
+    --weights $(weight)
+    --test_iterations 1
+    --net_name $(name)
+    --postprocess_and_calc_score_class none
+    --debug_cmd='use_fake_data_to_test;not_call_bmnetu'
+    --target=BM1684X
+    --cali_iterations 1
+    --input_shapes=[64,1,28,28]
+
+bmnetu_options:
+  --opt=2
+  --cmp=True
+  --target BM1684X
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --seed 42
+  --enable_profile=True
+
+bmnetu_batch_sizes: [1, 4, 8, 16]
