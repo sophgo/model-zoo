@@ -61,8 +61,10 @@ jobs:
       - uses: actions/checkout@master
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
 
-  markdown-content-vetting:
+  content-vetting:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@master
       - run: python3 .github/workflows/check.py
+      - run: .github/workflows/lfs_validate.sh

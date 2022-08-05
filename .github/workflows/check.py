@@ -113,12 +113,31 @@ def should_have_one_table_in_model_chapter(path, lines):
         f'Should have ONE-AND-ONLY-ONE table in Model chapter in {path}. ' \
         f'Got {table_count}.'
 
+def no_chapter_should_be_empty(path, lines):
+    invalid = None
+    for idx, line in enumerate(lines):
+        lineno = idx + 1
+        line = line.strip(' \n')
+        if not line.startswith('#'):
+            if line:
+                invalid = False
+            continue
+        if line.count('#') == 1:
+            # Model name
+            continue
+        assert not invalid, \
+            f'Please fill in chapter in {lineno}'
+        invalid = line.replace('#', '').strip()
+    assert not invalid, \
+        f'Please fill in chapter "{invalid}" in {path}:{lineno}'
+
 def link_markdown(path):
     with open(path) as f:
         lines = f.readlines()
 
     check_title_syntax(path, lines)
     check_title_content(path, lines)
+    no_chapter_should_be_empty(path, lines)
     should_have_one_table_in_model_chapter(path, lines)
     table_should_be_aligned(path, lines)
 
