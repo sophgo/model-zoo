@@ -1,7 +1,7 @@
 ---
 
 name: yolov5
-gops: [1.245641]
+gops: 10.21
 
 model: $(home)/yolov5s-4.0-640384_jit.pt
 
@@ -50,9 +50,13 @@ bmnetu_options:
 precision: true
 
 harness:
-  type: map
+  type: yolo
   args:
     - name: FP32
       bmodel: $(workdir)/1b.fp32.compilation/compilation.bmodel
+      imagedir: $(root)/dataset/val2017
+      anno: $(root)/dataset/annotations/instances_val2017.json
     - name: INT8
       bmodel: $(workdir)/1b.compilation/compilation.bmodel
+      imagedir: $(root)/dataset/val2017
+      anno: $(root)/dataset/annotations/instances_val2017.json
