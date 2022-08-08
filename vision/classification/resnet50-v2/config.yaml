@@ -40,8 +40,8 @@ deploy:
       --chip bm1684x
       --test_input $(workdir)/$(name)_in_f32.npz
       --test_reference $(name)_top_outputs.npz
-      --tolerance 0.97,0.76
-      --correctness 0.99,0.93
+      --tolerance 0.97,0.75
+      --correctness 0.99,0.92
       --model $(workdir)/$(name)_bm1684x_int8_sym.bmodel
   - model_deploy.py --mlir $(workdir)/transformed.mlir
       --quantize INT8

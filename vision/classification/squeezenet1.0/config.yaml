@@ -2,10 +2,9 @@
 
 name: squeezenet1.0
 
-gops: [0.703870808, 2.815483232]
+gops: [0.703870808]
 shapes:
   - [1, 3, 224, 224]
-  - [4, 3, 224, 224]
 
 mlir_transform:
   model_transform.py
