@@ -95,94 +95,6 @@ def preprocess(img, new_shape):
   return img[:, :, ::-1].transpose([2, 0, 1]).astype(np.float32) / 255 , ratio[0], (top, left)
 
 CONF_THRESH = 0.0
-def post_process(outputs, origin_h, origin_w):
-  """
-  description: postprocess the prediction
-  param:
-      output:     A tensor likes [num_boxes,cx,cy,w,h,conf,cls_id, cx,cy,w,h,conf,cls_id, ...]
-      origin_h:   height of original image
-      origin_w:   width of original image
-  return:
-      result_boxes: finally boxes, a boxes tensor, each row is a box [x1, y1, x2, y2]
-      result_scores: finally scores, a tensor, each element is the score correspoing to box
-      result_classid: finally classid, a tensor, each element is the classid correspoing to box
-  """
-
-  for key, output in outputs.items():
-    output = np.squeeze(output)
-    # Get the boxes
-    boxes = output[:, :, :, :4]
-    # Get the scores
-    scores = output[:, :, :, 4]
-    # Get the classid
-    classid = output[:, :, :, 5]
-
-
-    x1 = boxes[:, :, :, 0]
-    y1 = boxes[:, :, :, 1]
-    x2 = boxes[:, :, :, 2]
-    y2 = boxes[:, :, :, 3]
-    areas = (x2 - x1 + 1) * (y2 - y1 + 1)
-    order = scores.argsort()[::-1]
-
-    # Trandform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
-    indices = 0
-    # Do nms
-    while order.size > 0:
-      i = order[0]
-      xx1 = np.maximum(x1[i], x1[:,order[1:]])
-      yy1 = np.minimum(y1[i], y1[:,order[1:]])
-      xx2 = np.minimum(x2[i], x2[:,order[1:]])
-      yy2 = np.maximum(y2[i], y2[:,order[1:]])
-
-      w = np.maximum(0.0, xx2 - xx1 + 1)
-      h = np.maximum(0.0, yy2 - yy1 + 1)
-      inter = w * h
-      ovr = inter / (areas[i] + areas[order[1:]] - inter)
-
-      indices = np.where(ovr <= CONF_THRESH)[0]
-      order = order[indices + 1]
-
-    result_boxes = boxes[indices, :]
-    result_scores = scores[indices]
-    result_classid = classid[indices]
-  return result_boxes, result_scores, result_classid
-
-def compare(reference, bboxes, classes, probs, loop_id):
-  """ Compare result.
-  Args:
-    reference: Correct result
-    result: Output result
-    loop_id: Loop iterator number
-
-  Returns:
-    True for success and False for failure
-  """
-  if not reference:
-    print("No verify_files file or verify_files err.")
-    return True
-  if loop_id > 0:
-    return True
-  detected_num = len(classes)
-  reference_num = len(reference["category"])
-  if (detected_num != reference_num):
-    message = "Expected deteted number is {}, but detected {}!"
-    print(message.format(reference_num, detected_num))
-    return False
-  ret = True
-  scores = ["{:.8f}".format(p) for p in probs]
-  message = "Category: {}, Score: {}, Box: {}"
-  fail_info = "Compare failed! Expect: " + message
-  ret_info = "Result Box: " + message
-  for i in range(detected_num):
-    if classes[i] != reference["category"][i] or \
-        scores[i] != reference["score"][i] or \
-        bboxes[i] != reference["box"][i]:
-      print(fail_info.format(reference["category"][i], reference["score"][i], \
-                             reference["box"][i]))
-      print(ret_info.format(classes[i], scores[i], bboxes[i]))
-      ret = False
-  return ret
 
 ANCHORS = np.array([
     [10,  13, 16,  30,  33,  23 ],
@@ -466,8 +378,9 @@ def process(bmodel, imagedir, anno):
 @harness('yolo')
 def harness_yolo(tree, config, args):
   bmodel = tree.expand_variables(config, args['bmodel'])
-  imagedir = tree.expand_variables(config, args['imagedir'])
-  anno = tree.expand_variables(config, args['anno'])
+  dataset_info = config['dataset']
+  imagedir = tree.expand_variables(config, dataset_info['imagedir'])
+  anno = tree.expand_variables(config, dataset_info['anno'])
   result = process(bmodel, imagedir, anno)
   output = result.results['bbox']
   return {k: f'{v:.2%}' for k, v in output.items()}
