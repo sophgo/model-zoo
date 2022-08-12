@@ -36,6 +36,8 @@ deploy:
   - model_deploy.py --mlir $(workdir)/transformed.mlir
       --quantize INT8
       --calibration_table $(home)/cali_table
+      --quant_input
+      --quant_output
       --chip bm1684x
       --test_input $(workdir)/$(name)_in_f32.npz
       --test_reference $(name)_top_outputs.npz
