@@ -1,5 +1,19 @@
 # Open Pre-Trained Models
 
+## Usage - Compile and run
+
+Install [tpu-perf](https://github.com/sophgo/tpu-perf) to build and run model cases.
+
+```bash
+# Time only cases
+python3 -m tpu_perf.build --list default_cases.txt --time
+python3 -m tpu_perf.run --list default_cases.txt
+
+# Precision benchmark
+python3 -m tpu_perf.build --list default_cases.txt
+python3 -m tpu_perf.precision_benchmark --list default_cases.txt
+```
+
 ## Usage - Git LFS
 
 On default, cloning this repository will not download any ONNX models. Install
