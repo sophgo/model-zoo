@@ -1,0 +1,57 @@
+---
+
+name: ssd-resnet34
+
+gops: [433.117936290]
+shapes:
+  - [1, 3, 1200, 1200]
+
+mlir_transform:
+  model_transform.py
+    --model_name $(name)
+    --model_def $(home)/resnet34-ssd1200.onnx
+    --test_input $(root)/dataset/samples/cat.jpg
+    --input_shapes [$(shape_param)]
+    --resize_dims 1200,1200
+    --mean 123.675,116.28,103.53
+    --scale 0.01712475,0.017507,0.01742919
+    --pixel_format rgb
+    --output_names=Concat_470,Concat_471
+    --test_result $(name)_top_outputs.npz
+    --mlir $(workdir)/transformed.mlir
+
+# mlir_calibration:
+#   run_calibration.py $(workdir)/transformed.mlir
+#     --dataset $(imagenet2012_mlir_cali_set)
+#     --input_num 100
+#     -o $(workdir)/$(name).calitable
+
+deploy:
+  - model_deploy.py  --mlir $(workdir)/transformed.mlir
+      --quantize F32
+      --chip bm1684x
+      --test_input $(workdir)/$(name)_in_f32.npz
+      --test_reference $(name)_top_outputs.npz
+      --tolerance 0.99,0.99
+      --model $(workdir)/$(name)_bm1684x_f32.bmodel
+  - model_deploy.py --mlir $(workdir)/transformed.mlir
+      --quantize INT8
+      --calibration_table $(home)/cali_table
+      --quant_input
+      --quant_output
+      --chip bm1684x
+      --test_input $(workdir)/$(name)_in_f32.npz
+      --test_reference $(name)_top_outputs.npz
+      --tolerance 0.97,0.78
+      --correctness 0.98,0.90
+      --model $(workdir)/$(name)_bm1684x_int8_sym.bmodel
+  - model_deploy.py --mlir $(workdir)/transformed.mlir
+      --quantize INT8
+      --asymmetric
+      --calibration_table $(home)/cali_table
+      --chip bm1684x
+      --test_input $(workdir)/$(name)_in_f32.npz
+      --test_reference $(name)_top_outputs.npz
+      --tolerance 0.97,0.78
+      --correctness 0.99,0.90
+      --model $(workdir)/$(name)_bm1684x_int8_asym.bmodel
