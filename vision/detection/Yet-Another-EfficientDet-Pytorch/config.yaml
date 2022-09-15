@@ -8,10 +8,11 @@ int8_model: $(workdir)/$(name)_bmnetp_deploy_int8_unique_top.prototxt
 int8_weight: $(workdir)/$(name)_bmnetp.int8umodel
 
 fp32_compile_options:
-  bmnetp
+  python3 -m bmnetp
   --model $(model)
   --shapes [1,3,512,512]
   --target BM1684X
+  --enable_profile True
   --opt 1
   --cmp 1
 
@@ -21,7 +22,7 @@ time_only_cali:
     --test_iterations 1
     --net_name $(name)
     --postprocess_and_calc_score_class none
-    --debug_cmd='use_fake_data_to_test;cali_extra_param=--target=BM1684X'
+    --debug_cmd='use_fake_data_to_test;cali_extra_param=--target=BM1684X;not_call_bmnetu'
     --cali_iterations 1
     --input_shapes=[1,3,512,512]
 

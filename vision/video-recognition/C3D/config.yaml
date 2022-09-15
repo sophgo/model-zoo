@@ -8,10 +8,11 @@ int8_model: $(workdir)/$(name)_bmnetp_deploy_int8_unique_top.prototxt
 int8_weight: $(workdir)/$(name)_bmnetp.int8umodel
 
 fp32_compile_options:
-  bmnetp
+  python3 -m bmnetp
   --model $(model)
   --shapes [1,3,16,112,112]
   --target BM1684X
+  --enable_profile True
   --opt 1
   --cmp 1
 

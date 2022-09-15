@@ -14,6 +14,7 @@ fp32_compile_options:
   --weight $(weight)
   --shapes [1,3,216,384]
   --target BM1684X
+  --enable_profile true
   --opt 1
   --cmp 1
 

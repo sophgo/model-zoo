@@ -12,6 +12,7 @@ fp32_compile_options:
     --model $(model)
     --shapes [1,3,416,416]
     --target BM1684X
+    --enable_profile True
     --opt 1
     --cmp 1
 
