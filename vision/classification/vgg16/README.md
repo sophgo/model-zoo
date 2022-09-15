@@ -36,7 +36,7 @@ essential and there are limited constraints on model sizes.
 
 * [Intel® Neural Compressor](https://github.com/intel/neural-compressor)
 
-* [https://github.com/onnx/models](https://github.com/onnx/models/tree/main/vision/classification/vgg)
+* [onnx/models](https://github.com/onnx/models/tree/main/vision/classification/vgg)
 
 ## Contributors
 

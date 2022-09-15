@@ -1,0 +1,21 @@
+---
+
+name: Release
+on: workflow_dispatch
+
+jobs:
+  release:
+    name: Pack And Release
+    runs-on: self-hosted
+
+    steps:
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
+        uses: nschloe/action-cached-lfs-checkout@f36573bae4ed2cd523d8f62f17415814eb491aac
+        with:
+          fetch-depth: 1
+      - run: .github/workflows/pack.sh
+        env:
+          REMOTE: ${{ secrets.REMOTE }}

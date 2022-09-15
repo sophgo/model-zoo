@@ -39,9 +39,15 @@ def table_should_be_aligned(fn, lines):
                 f'Vertical bar count error in {fn}:{lineno}'
 
 def check_title_syntax(path, lines):
+    in_code = False
     got_one = False
     for line in lines:
         line = line.strip(' \n')
+        if line.count('```'):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
         if line.startswith('#'):
             assert got_one or line.count('#') == 1, \
                 f'First title should be top level with single # in {path}'

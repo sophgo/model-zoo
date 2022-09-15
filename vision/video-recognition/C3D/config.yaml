@@ -27,7 +27,7 @@ time_only_cali:
     --input_shapes=[1,3,16,112,112]
 
 bmnetu_options:
-  --opt=2
+  --opt=1
   --cmp=True
   --target BM1684X
   --model $(int8_model)
