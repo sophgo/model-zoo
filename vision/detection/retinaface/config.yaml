@@ -1,0 +1,34 @@
+---
+name: retinaface
+gops: 15.4873409980
+
+model: $(home)/retinaface_resnet50.onnx
+
+fp32_compile_options:
+  python3 -m bmneto
+    --model=$(model)
+    --shapes=[1,3,839,840]
+    --net_name=$(name)
+    --target=BM1684X
+    --enable_profile true
+
+time_only_cali:
+  python3 -m ufw.cali.cali_model
+    --model=$(model)
+    --input_shapes="[1,3,839,840]"
+    --net_name=$(name)
+    --cali_iterations=1
+    --target=BM1684X
+    --test_iterations=1
+    --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
+
+int8_model: $(workdir)/$(name)_bmneto_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmneto.int8umodel
+
+bmnetu_batch_sizes: [1, 4]
+
+bmnetu_options:
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --target BM1684X
+  --enable_profile True
