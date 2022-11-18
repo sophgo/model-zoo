@@ -1,0 +1,75 @@
+---
+
+name: facenet
+gops: 8.53
+
+model: $(home)/facenet.pb
+
+precision: true
+
+fp_batch_sizes: [1,2,4]
+fp_loops:
+  - fp_outdir_template: "{}b.fp32.compilation"
+  - build_env:
+      - BMCOMPILER_LAYER_DTYPE_MODE=auto
+    fp_outdir_template: "{}b.fp16.compilation"
+
+fp_compile_options:
+  python3 -m bmnett
+  --model $(model)
+  --input_names "input"
+  --output_names "embeddings"
+  --shapes [1,160,160,3]
+  --target BM1684X
+  --cmp false
+  --enable_profile True
+
+
+cali:
+  python3 -m ufw.cali.cali_model
+    --model=$(model)
+    --input_shapes="[1,160,160,3]"
+    --net_name=$(name)
+    --input_names="input"
+    --output_names="embeddings"
+    --cali_iterations=200
+    --cali_image_path=$(lfw_cali_set)
+    --cali_image_preprocess="resize_h=160,resize_w=160;mean_value=127.5:127.5:127.5,scale=0.0078125,bgr2rgb=True"
+    --target=BM1684X
+    --test_iterations=1
+    --debug_cmd="not_call_bmnetu"
+
+
+int8_model: $(workdir)/$(name)_bmnett_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmnett.int8umodel
+bmnetu_batch_sizes: [1,2,4]
+bmnetu_options:
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --target BM1684X
+  --enable_profile True
+  --output_as_fp32 embeddings
+  --cmp True
+
+
+harness:
+  type: facenet
+  args:
+    - name: FP32
+      bmodel: $(workdir)/4b.fp32.compilation/compilation.bmodel
+      lfw_dir: $(lfw_val_set)
+      lfw_pairs: $(root)/dataset/lfw/pairs.txt
+      batch_size: 4
+      lfw_nrof_folds: 10
+    - name: FP16
+      bmodel: $(workdir)/4b.fp16.compilation/compilation.bmodel
+      lfw_dir: $(lfw_val_set)
+      lfw_pairs: $(root)/dataset/lfw/pairs.txt
+      batch_size: 4
+      lfw_nrof_folds: 10
+    - name: INT8
+      bmodel: $(workdir)/4b.compilation/compilation.bmodel
+      lfw_dir: $(lfw_val_set)
+      lfw_pairs: $(root)/dataset/lfw/pairs.txt
+      batch_size: 4
+      lfw_nrof_folds: 10

@@ -1,3 +1,6 @@
 opencv-python
 numpy
 pycocotools
+scikit-learn
+scipy
+tarfile

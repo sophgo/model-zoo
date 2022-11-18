@@ -1,5 +1,1 @@
-vision/classification/LeNet
-vision/classification/inception_v4
-vision/classification/ResNet50-Caffe
-vision/detection/yolov5
-vision/segmentation/paddle_humansegv1_lite
+vision/detection/facenet
