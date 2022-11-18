@@ -22,3 +22,8 @@ default_cases:
   - vision/classification/inception_v4
   - vision/classification/ResNet50-Caffe
   - vision/detection/yolov5
+
+
+lfw_val_set: $(root)/dataset/lfw/lfw_mtcnnpy_160.tar
+lfw_cali_set: $(root)/dataset/lfw/caliset/
+lfw_pairs: $(root)/dataset/lfw/pairs.txt
