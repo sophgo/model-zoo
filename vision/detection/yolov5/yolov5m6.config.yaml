@@ -32,7 +32,7 @@ cali:
     --input_shapes="[1,3,640,640]"
     --net_name=$(name)
     --cali_iterations=100
-    --cali_image_path=$(coco2017_val_set)
+    --cali_image_path=$(coco2017_cali_set)
     --cali_image_preprocess='resize_h=640,resize_w=640;scale=0.003921569,bgr2rgb=True'
     --target=BM1684X
     --try_cali_accuracy_opt

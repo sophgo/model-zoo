@@ -1,14 +1,14 @@
 ---
 
-name: yolov5s-4
+name: yolov5l-5
 gops: 10.21
 
-model: $(home)/yolov5s-4.0-640384_jit.pt
+model: $(home)/yolov5l-5.0.pt
 
 fp_compile_options:
   python3 -m bmnetp
     --model $(model)
-    --shapes [[1,3,640,384]]
+    --shapes [[1,3,640,640]]
     --net_name $(name)
     --target BM1684X
     --enable_profile True
@@ -16,25 +16,25 @@ fp_compile_options:
 time_only_cali:
   python3 -m ufw.cali.cali_model
     --model=$(model)
-    --input_shapes="[1,3,640,384]"
+    --input_shapes="[1,3,640,640]"
     --net_name=$(name)
     --cali_iterations=1
     --target=BM1684X
-    --try_cali_accuracy_opt='-fpfwd_outputs=< 24 >18,< 24 >55,< 24 >86'
+    --try_cali_accuracy_opt='-fpfwd_outputs=< 24 >14,< 24 >51,< 24 >82'
     --test_iterations=1
     --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
 
 cali:
   python3 -m ufw.cali.cali_model
     --model=$(model)
-    --input_shapes="[1,3,640,384]"
+    --input_shapes="[1,3,640,640]"
     --net_name=$(name)
     --cali_iterations=100
     --cali_image_path=$(coco2017_cali_set)
-    --cali_image_preprocess='resize_h=640,resize_w=384;scale=0.003921569,bgr2rgb=True'
+    --cali_image_preprocess='resize_h=640,resize_w=640;scale=0.003921569,bgr2rgb=True'
     --target=BM1684X
     --try_cali_accuracy_opt
-        '-fpfwd_outputs=< 24 >18,< 24 >55,< 24 >86;-asym_threshold=true'
+        '-fpfwd_outputs=< 24 >14,< 24 >51,< 24 >82;-asym_threshold=true'
     --test_iterations=1
     --debug_cmd="not_call_bmnetu"
 
