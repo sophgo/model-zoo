@@ -25,3 +25,4 @@ vision/detection/Yet-Another-EfficientDet-Pytorch
 vision/detection/yolov5
 vision/detection/py-R-FCN
 vision/detection/yolov3_tiny
+vision/segmentation/paddle_humansegv1_lite

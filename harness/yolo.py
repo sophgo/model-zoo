@@ -186,8 +186,12 @@ def non_max_suppression(prediction, conf_thres=0.001, iou_thres=0.3, classes=Non
     Returns:
          detections with shape: nx6 (x1, y1, x2, y2, conf, cls)
     """
-    prediction = [prediction['1'], prediction['2'], prediction['3']]
-    prediction = predict_preprocess(prediction)
+    if(len(prediction)>1):
+        prediction = [prediction['1'], prediction['2'], prediction['3']]
+        prediction = predict_preprocess(prediction)
+    else:
+        prediction = [prediction['1']]
+        prediction = np.concatenate(prediction,1)
     nc = prediction[0].shape[1] - 5  # number of classes
     xc = prediction[..., 4] > conf_thres  # candidates
 
@@ -291,9 +295,12 @@ def inference(net, input_path, loops, tpu_id):
     task_id = net.put(input_data.astype(dtype))
     task_id, results,valid = net.get()
     output={}
-    output['1'] = results[0]
-    output['2'] = results[1]
-    output['3'] = results[2]
+    if (len(results) > 1):
+        output['1'] = results[0]
+        output['2'] = results[1]
+        output['3'] = results[2]
+    else:
+        output['1'] = results[0]
 
     prediction = non_max_suppression(output, conf_thres=threshold, iou_thres=nms_threshold, classes=None)
     for i in prediction:
@@ -328,7 +335,7 @@ def process(bmodel, devices, imagedir, anno):
   proc=0
   processed=0
   for img in js['images']:
-    print(".",end='',flush=True)   
+    print(".",end='',flush=True)
     img_p = img['file_name']
     if samples < 0:
       if not os.path.isfile('/'.join((imagedir,img_p))):
