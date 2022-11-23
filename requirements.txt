@@ -3,4 +3,3 @@ numpy
 pycocotools
 scikit-learn
 scipy
-tarfile
