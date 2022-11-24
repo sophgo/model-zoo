@@ -18,6 +18,7 @@ vision/classification/vgg11-torch
 vision/classification/mobilenet-v2
 vision/classification/InceptionBN-21k-for-Caffe
 vision/classification/ResNeXt
+vision/classification/SqueezeNet_v1.1
 vision/super-resolution/SRCNN
 vision/super-resolution/VDSR
 vision/detection/ultralytics-yolov3
