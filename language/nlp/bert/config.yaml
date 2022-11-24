@@ -1,0 +1,25 @@
+---
+
+name: bert
+gops: 42.87
+
+model: $(home)/bert4torch_jit.pt
+
+precision: true
+
+fp_batch_sizes: [1, 8]
+
+fp_loops:
+  - build_env:
+      - BMCOMPILER_LAYER_DTYPE_MODE=
+    fp_outdir_template: "{}b.fp32.compilation"
+  - build_env:
+      - BMCOMPILER_LAYER_DTYPE_MODE=bf16
+    fp_outdir_template: "{}b.bf16.compilation"
+fp_compile_options:
+  python3 -m bmnetp
+    --model $(model)
+    --shapes [[1,256]]
+    --net_name $(name)
+    --target BM1684X
+    --enable_profile True
