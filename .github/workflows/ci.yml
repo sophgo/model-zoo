@@ -1,0 +1,34 @@
+---
+
+name: Test
+on:
+  push:
+  pull_request:
+    branches: [main]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # UTC time 22:30
+    - cron: '30 22 * * *'
+
+jobs:
+  test:
+    name: Test Model Compiling
+    runs-on: build
+
+    steps:
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
+        uses: nschloe/action-cached-lfs-checkout@f36573bae4ed2cd523d8f62f17415814eb491aac
+        with:
+          fetch-depth: 0
+
+      - name: Set Schedule Env
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          echo "FULL_TEST=true" >> $GITHUB_ENV
+
+      - run: .github/workflows/test_build.sh
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}

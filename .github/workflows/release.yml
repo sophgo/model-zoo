@@ -6,7 +6,7 @@ on: workflow_dispatch
 jobs:
   release:
     name: Pack And Release
-    runs-on: self-hosted
+    runs-on: pack
 
     steps:
       ##########################
