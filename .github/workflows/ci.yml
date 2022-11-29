@@ -12,6 +12,7 @@ on:
 
 jobs:
   test:
+    if: github.repository == 'sophgo/model-zoo'
     name: Test Model Compiling
     runs-on: build
     environment: testing
