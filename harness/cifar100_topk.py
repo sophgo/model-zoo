@@ -4,6 +4,7 @@ import os
 import cv2
 import numbers
 import numpy as np
+import torchvision as tv
 
 from tpu_perf.infer import SGInfer
 
@@ -64,17 +65,18 @@ from multiprocessing import Process, Queue
 import threading
 
 class Runner:
-    def __init__(self, bmodel, devices, val_path, list_file, config, threads):
+    def __init__(self, bmodel, devices, val_path, config, threads):
         self.val_path = val_path
         self.config = config
         self.model = SGInfer(bmodel, devices=devices)
         self.input_info = self.model.get_input_info()
-        self.size = config.get('size', 224)
+        # self.size = config.get('size', 224)
 
         self.labels = dict()
         self.stats = dict(count = 0, top1 = 0, top5 = 0)
 
-        pairs = [pair for pair in read_image_list(list_file)]
+        test_set = tv.datasets.CIFAR100(val_path, train=False, download=True)
+        pairs = [list((np.array(X), np.array(Y))) for i, (X, Y) in enumerate(test_set)]
         parts = sever(pairs, threads)
         self.pre_procs = []
         self.q = Queue(maxsize=threads * 2)
@@ -111,27 +113,14 @@ class Runner:
             self.q.put((np.stack(bulk), bulk_label))
             bulk = []
             bulk_label = []
-        for fn, label in part:
-            path = os.path.join(self.val_path, fn)
-            if not os.path.exists(path):
-                logging.error(f'File {path} does no exist')
-                raise RuntimeError('File not exist')
-            img = cv2.imread(path)
+        for data, label in part:
 
-            if self.config.get('bgr2rgb'):
-                img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-
-            resized = resize(img, 256)
-            cropped = center_crop(resized, 224)
-            cropped = resize(cropped, self.size)
-            data = cropped.astype(np.float32)
+            data = data.astype(np.float32)
             if 'mean' in self.config:
                 data -= self.config['mean']
             if 'scale' in self.config:
                 data *= self.config['scale']
-
-            if self.config.get('trans'):
-                data = data.transpose([2, 0, 1])
+            data = data.transpose([2, 0, 1])
 
             dtype = np.float32
             if not is_fp32:
@@ -205,21 +194,19 @@ class Runner:
 
 from tpu_perf.harness import harness
 
-@harness('topk')
+@harness('cifar100_topk')
 def harness_main(tree, config, args):
     input_config = config['dataset']
     scale = input_config['scale']
     mean = input_config['mean']
-    size = input_config['size']
-    trans = input_config['trans']
-    bgr2rgb = input_config['bgr2rgb']
-    pre_config = dict(mean=mean, scale=scale, size=size, trans=trans, bgr2rgb=bgr2rgb)
+    # size = input_config['size']
+    pre_config = dict(mean=mean, scale=scale)
     val_path = tree.expand_variables(config, input_config['image_path'])
-    list_file = tree.expand_variables(config, input_config['image_label'])
+    # list_file = tree.expand_variables(config, input_config['image_label'])
     bmodel = tree.expand_variables(config, args['bmodel'])
     devices = tree.global_config['devices']
     runner = Runner(
-        bmodel, devices, val_path, list_file, pre_config,
+        bmodel, devices, val_path, pre_config,
         args.get('threads', 8))
     runner.join()
     return runner.get_stats()
@@ -231,19 +218,17 @@ def main():
         '--bmodel', type=str, help='Bmodel path')
     parser.add_argument(
         '--image_path', type=str, help='image set path')
-    parser.add_argument(
-        '--list_file', type=str, help='List file (with labels) path')
+    # parser.add_argument(
+    #     '--list_file', type=str, help='List file (with labels) path')
     parser.add_argument(
         '--mean', required=True, type=str, help='Mean value like 128,128,128')
     parser.add_argument(
         '--scale', required=True, type=float, help='Float scale value')
-    parser.add_argument(
-        '--size', required=True, type=int, help='Crop size. (Resized to 256 then crop)')
+    # parser.add_argument(
+    #     '--size', required=True, type=int, help='Crop size. (Resized to 256 then crop)')
     parser.add_argument('--threads', type=int, default=4)
     parser.add_argument('--devices', '-d', type=int, nargs='*', help='Devices',
         default=[0])
-    parser.add_argument('--trans', type =str, default=True,help='default True do transpose to align with opencv format')
-    parser.add_argument('--bgr2rgb', type=str, default=True,help="default True to convert image into rgb format")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -252,12 +237,11 @@ def main():
     mean = [float(v) for v in args.mean.split(',')]
     if len(mean) != 3:
         mean = mean[:1] * 3
-    scale = [float(v) for v in args.scale.split(',')]
     if len(scale) != 3:
         scale = scale[:1] * 3
-    config = dict(mean=mean, scale=scale, size=args.size, trans=args.trans, bgr2rgb=args.bgr2rgb)
+    config = dict(mean=mean, scale=args.scale)
     print(config)
-    runner = Runner(args.bmodel, args.devices, args.image_path, args.list_file, config, args.threads)
+    runner = Runner(args.bmodel, args.devices, args.image_path, config, args.threads)
     runner.join()
     print(runner.get_stats())
 

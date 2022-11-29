@@ -5,3 +5,4 @@ package.json
 __pycache__
 tpu-nntc*/
 *.swp
+lock.mdb

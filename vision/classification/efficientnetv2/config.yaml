@@ -1,0 +1,69 @@
+---
+
+name: efficientnetv2
+gops: 5.9
+
+model: $(home)/efficientnetv2.onnx
+
+precision: true
+
+fp_compile_options:
+  python3 -m bmneto
+    --model $(model)
+    --shapes [1,3,288,288]
+    --net_name $(name)
+    --target BM1684X
+    --enable_profile true
+    --cmp false
+
+time_only_cali:
+  python3 -m ufw.cali.cali_model
+    --model $(model)
+    --input_shapes "[1,3,288,288]"
+    --net_name $(name)
+    --target BM1684X
+    --test_iterations 1
+    --cali_iterations 1
+    --debug_cmd "use_fake_data_to_test;not_suspend;not_call_bmnetu"
+
+cali:
+  python3 -m ufw.cali.cali_model
+    --model=$(model)
+    --input_shapes="[1,3,288,288]"
+    --net_name=$(name)
+    --cali_iterations=200
+    --cali_image_path=$(imagenet2012_cali_set)
+    --cali_image_preprocess="resize_h=288,resize_w=288;mean_value=123.675:116.28:103.53,scale=0.0171:0.0175:0.0174;bgr2rgb=True"
+    --target=BM1684X
+    --test_iterations=1
+    --debug_cmd="not_suspend;not_call_bmnetu"
+    --try_cali_accuracy_opt='-th_method=MSE'
+    --fp32_layer_list='1643,1290,1283,1284'
+
+int8_model: $(workdir)/$(name)_bmneto_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmneto.int8umodel
+
+bmnetu_batch_sizes: [1, 3]
+bmnetu_options:
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --target BM1684X
+  --cmp False
+  --enable_profile True
+
+dataset:
+  image_path: $(imagenet2012_val_set)
+  image_label: $(imagenet2012_caffe_val_ground_truth)
+  mean: [123.675, 116.28, 103.53]
+  scale: [0.0171247538, 0.0175070028, 0.0174291938]
+  size: 288
+  trans: True
+  bgr2rgb: True
+
+harness:
+  type: topk
+  args:
+    - name: FP32
+      bmodel: $(workdir)/1b.fp.compilation/compilation.bmodel
+    - name: INT8
+      bmodel: $(workdir)/1b.compilation/compilation.bmodel

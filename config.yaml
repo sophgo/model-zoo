@@ -17,6 +17,9 @@ coco2017_cali_set: $(root)/dataset/COCO2017/caliset
 coco2017_val_set: $(root)/dataset/COCO2017/val2017
 coco2017_anno: $(root)/dataset/COCO2017/annotations
 
+cifar100_cali_lmdb: $(root)/dataset/CIFAR100/cifar100_quant_lmdb
+cifar100_val_set: $(root)/dataset/CIFAR100
+
 default_cases:
   - vision/classification/LeNet
   - vision/classification/inception_v4

@@ -9,3 +9,4 @@ dataset/ILSVRC2012/caffe_val.txt filter=lfs diff=lfs merge=lfs -text
 *.pdiparams filter=lfs diff=lfs merge=lfs -text
 *.pdiparams.info filter=lfs diff=lfs merge=lfs -text
 *zip filter=lfs diff=lfs merge=lfs -text
+*.mdb filter=lfs diff=lfs merge=lfs -text

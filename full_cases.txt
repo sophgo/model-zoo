@@ -31,3 +31,5 @@ vision/classification/efficientnet-lite4
 vision/detection/mtcnn
 vision/reid/market_bot_R50
 language/nlp/bert
+vision/classification/mm_resnet50
+vision/classification/efficientnetv2
