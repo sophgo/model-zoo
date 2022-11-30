@@ -1,0 +1,24 @@
+---
+
+name: ConformerEncoder
+
+model: $(home)/ConformerEncoder.pt
+
+time: true
+precision: true
+runtime_cmp: false
+
+build_env:
+  - BMCOMPILER_FORCE_GLOBAL_LAYER_BY_ID="a"
+  - BMCOMPILER_BFLOAT16_LAYER_TYPES="BROADCAST_BINARY(MUL),ELTWISE_BINARY(MUL),ACTIVE(SQUARE),BATCH_MATMUL,CONST_BINARY(MUL)"
+
+fp_compile_options:
+  python3 -m bmnetp
+  --model $(model)
+  --shapes '[1,458,256],[1,458,256],[1,1,458]'
+  --target BM1684X
+  --enable_profile True
+  --opt 2
+  --dyn True
+  --cmp 0
+
