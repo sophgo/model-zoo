@@ -23,10 +23,6 @@ market_bot_R50 is a model of Person Re-identification and models pretrained on t
 
 * [fast-reid](https://github.com/JDAI-CV/fast-reid)
 
-## Contributors
-
-* [market_bot_R50.pth](https://github.com/JDAI-CV/fast-reid/releases/download/v0.1.1/market_bot_R50.pth) (fast-reid)
-
 ## License
 
 Apache 2.0
