@@ -11,9 +11,10 @@ For portrait segmentation and general human segmentation, PaddleSeg releases the
 Besides, PP-HumanSeg models can be deployed to products at zero cost, and it also support fine-tuning to achieve better performance.
 
 ## Model
-| Model                | Download                            | Shape(hw) | mIou(%) |
-| -------------------- |:----------------------------------- |:--------- |:--------|
-| PP-HumanSegV1-Lite   | [580.7 KB](human_pp_humansegv1.zip) | 192 192   | 86.02   |
+| Model                 | Download                              | Shape(hw) | mIou(%) |
+| --------------------- |:------------------------------------- |:--------- |:--------|
+| PP-HumanSegV1-Lite    | [580.7 KB](human_pp_humansegv1.zip)   | 192 192   | 86.02   |
+| PP-HumanSeg-Lite-mini | [580.7 KB](pp_humanseg_lite_mini.zip) |           |         |
 
 ## Dataset
 
