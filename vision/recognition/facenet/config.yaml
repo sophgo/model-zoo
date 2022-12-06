@@ -9,11 +9,13 @@ precision: true
 
 fp_batch_sizes: [1, 4, 8, 16]
 fp_loops:
-  - build_env: [ ]
+  - build_env:
+      - BMCOMPILER_GROUP_SEARCH_COUNT=1
     fp_outdir_template: "{}b.fp32.compilation"
     prec: FP32
   - build_env:
       - BMCOMPILER_LAYER_DTYPE_MODE=auto
+      - BMCOMPILER_GROUP_SEARCH_COUNT=1
     fp_outdir_template: "{}b.fp16.compilation"
     prec: FP16
 
@@ -87,3 +89,6 @@ harness:
       lfw_pairs: $(root)/dataset/lfw/pairs.txt
       batch_size: 4
       lfw_nrof_folds: 10
+
+build_env:
+  - BMCOMPILER_GROUP_SEARCH_COUNT=1
