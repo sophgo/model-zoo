@@ -21,7 +21,7 @@ time_only_cali:
     --cali_iterations=1
     --target=BM1684X
     --input_name="x"
-    --output_name="softmax_0.tmp_0"
+    --output_name="argmax_0.tmp_0"
     --test_iterations=1
     --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
 
