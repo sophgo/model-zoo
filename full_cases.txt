@@ -35,3 +35,4 @@ language/asr/conformer
 vision/classification/mm_resnet50
 vision/classification/efficientnetv2
 vision/segmentation/unet_plusplus
+vision/recognition/facenet
