@@ -26,9 +26,8 @@ fp_compile_options:
   --output_names "embeddings"
   --shapes [1,160,160,3]
   --target BM1684X
-  --cmp False
+  --cmp True
   --enable_profile True
-
 
 cali:
   python3 -m ufw.cali.cali_model
@@ -65,8 +64,7 @@ bmnetu_options:
   --target BM1684X
   --enable_profile True
   --output_as_fp32 embeddings
-  --cmp False
-
+  --cmp True
 
 harness:
   type: facenet
