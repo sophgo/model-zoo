@@ -36,4 +36,6 @@ vision/classification/mm_resnet50
 vision/classification/efficientnetv2
 vision/segmentation/unet_plusplus
 vision/recognition/facenet
-vision/recognition/pp_liteseg
+vision/segmentation/pp_liteseg
+vision/segmentation/deeplabv3p
+vision/segmentation/mobileseg
