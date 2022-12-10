@@ -1,0 +1,41 @@
+---
+
+name: yolov5s-tflite
+
+gops: 16.5
+shapes:
+  - [1, 3, 640, 640]
+
+mlir_transform:
+  "model_transform.py
+    --model_name $(name)
+    --model_def $(home)/yolov5s-int8.tflite
+    --test_input $(root)/dataset/samples/cat.jpg
+    --input_shapes [$(shape_param)]
+    --pixel_format rgb
+    --output_names
+    'model/tf_detect/tf_conv2d_2/conv2d_59/BiasAdd;\
+    model/tf_detect/tf_conv2d/conv2d_57/Conv2D;\
+    model/tf_detect/tf_conv2d_2/conv2d_59/Conv2D;\
+    tf_detect/tf_conv2d_2/conv2d_59/bias1',\
+    'model/tf_detect/tf_conv2d_1/conv2d_58/BiasAdd;\
+    model/tf_detect/tf_conv2d/conv2d_57/Conv2D;\
+    model/tf_detect/tf_conv2d_1/conv2d_58/Conv2D;\
+    tf_detect/tf_conv2d_1/conv2d_58/bias1',\
+    'model/tf_detect/tf_conv2d/conv2d_57/BiasAdd;\
+    model/tf_detect/tf_conv2d/conv2d_57/Conv2D;\
+    tf_detect/tf_conv2d/conv2d_57/bias1'
+    --test_result $(name)_top_outputs.npz
+    --mlir $(workdir)/transformed.mlir"
+
+
+deploy:
+  - model_deploy.py --mlir $(workdir)/transformed.mlir
+      --quantize INT8
+      --asymmetric
+      --chip bm1684x
+      --test_input $(workdir)/$(name)_in_f32.npz
+      --test_reference $(name)_top_outputs.npz
+      --tolerance 0.99,0.90
+      --correctness 0.99,0.93
+      --model $(workdir)/$(name)_bm1684x_int8_asym.bmodel

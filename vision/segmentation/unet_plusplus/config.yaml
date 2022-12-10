@@ -5,34 +5,66 @@ gops: 10.21
 
 model: $(home)/unet_plusplus_cityscapes/
 
-fp_compile_options:
-  python3 -m bmpaddle
-    --model $(model)
-    --shapes [[1,3,640,640]]
-    --net_name $(name)
-    --target BM1684X
+BM1684X:
+  fp_compile_options:
+    python3 -m bmpaddle
+      --model $(model)
+      --shapes [[1,3,640,640]]
+      --net_name $(name)
+      --target $(target)
+      --enable_profile True
+
+  time_only_cali:
+    python3 -m ufw.cali.cali_model
+      --model=$(model)/model.pdmodel
+      --input_shapes="[1,3,640,640]"
+      --net_name=$(name)
+      --cali_iterations=1
+      --target=$(target)
+      --input_name="x"
+      --output_name="argmax_0.tmp_0"
+      --test_iterations=1
+      --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
+
+  int8_model: $(workdir)/$(name)_bmpaddle_deploy_int8_unique_top.prototxt
+  int8_weight: $(workdir)/$(name)_bmpaddle.int8umodel
+
+  bmnetu_batch_sizes: [1, 4]
+  bmnetu_options:
+    --model $(int8_model)
+    --weight $(int8_weight)
+    --target $(target)
     --enable_profile True
 
-time_only_cali:
-  python3 -m ufw.cali.cali_model
-    --model=$(model)/model.pdmodel
-    --input_shapes="[1,3,640,640]"
-    --net_name=$(name)
-    --cali_iterations=1
-    --target=BM1684X
-    --input_name="x"
-    --output_name="argmax_0.tmp_0"
-    --test_iterations=1
-    --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
+BM1684:
+  fp_compile_options:
+    python3 -m bmpaddle
+      --model $(model)
+      --shapes [[1,3,640,640]]
+      --net_name $(name)
+      --target $(target)
+      --enable_profile False
 
-int8_model: $(workdir)/$(name)_bmpaddle_deploy_int8_unique_top.prototxt
-int8_weight: $(workdir)/$(name)_bmpaddle.int8umodel
+  time_only_cali:
+    python3 -m ufw.cali.cali_model
+      --model=$(model)/model.pdmodel
+      --input_shapes="[1,3,640,640]"
+      --net_name=$(name)
+      --cali_iterations=1
+      --target=$(target)
+      --input_name="x"
+      --output_name="argmax_0.tmp_0"
+      --test_iterations=1
+      --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
 
-bmnetu_batch_sizes: [1, 4]
-bmnetu_options:
-  --model $(int8_model)
-  --weight $(int8_weight)
-  --target BM1684X
-  --enable_profile True
+  int8_model: $(workdir)/$(name)_bmpaddle_deploy_int8_unique_top.prototxt
+  int8_weight: $(workdir)/$(name)_bmpaddle.int8umodel
+
+  bmnetu_batch_sizes: [1, 4]
+  bmnetu_options:
+    --model $(int8_model)
+    --weight $(int8_weight)
+    --target $(target)
+    --enable_profile False
 
 precision: false

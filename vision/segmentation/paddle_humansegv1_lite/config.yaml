@@ -10,7 +10,7 @@ fp_compile_options:
     --model $(model)
     --shapes [[1,3,192,192]]
     --net_name $(name)
-    --target BM1684X
+    --target $(target)
     --enable_profile True
 
 time_only_cali:
@@ -19,7 +19,7 @@ time_only_cali:
     --input_shapes="[1,3,192,192]"
     --net_name=$(name)
     --cali_iterations=1
-    --target=BM1684X
+    --target=$(target)
     --input_name="x"
     --output_name="softmax_0.tmp_0"
     --test_iterations=1
@@ -32,7 +32,7 @@ bmnetu_batch_sizes: [1, 4]
 bmnetu_options:
   --model $(int8_model)
   --weight $(int8_weight)
-  --target BM1684X
+  --target $(target)
   --enable_profile True
 
 precision: false

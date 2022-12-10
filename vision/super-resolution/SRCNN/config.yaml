@@ -13,7 +13,7 @@ fp_compile_options:
   --model $(model)
   --weight $(weight)
   --shapes [1,1,100,100]
-  --target BM1684X
+  --target $(target)
   --enable_profile true
   --opt 1
   --cmp 1
@@ -26,14 +26,14 @@ time_only_cali:
     --net_name $(name)
     --postprocess_and_calc_score_class none
     --debug_cmd='use_fake_data_to_test;not_call_bmnetu'
-    --target=BM1684X
+    --target=$(target)
     --cali_iterations 1
     --input_shapes=[1,1,100,100]
 
 bmnetu_options:
   --opt=2
   --cmp=True
-  --target BM1684X
+  --target $(target)
   --model $(int8_model)
   --weight $(int8_weight)
   --seed 42
