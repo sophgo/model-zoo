@@ -20,7 +20,7 @@ time_only_cali:
   python3 -m ufw.cali.cali_model
     --model=$(model)/model.pdmodel
     --input_shapes="[1,2];[1,3,640,320];[1,2]"
-    --input_names="image,scale_factor"
+    --input_names="im_shape,image,scale_factor"
     --output_names="multiclass_nms3_0.tmp_0,multiclass_nms3_0.tmp_2"
     --input_descs="[0,fp32,640,320];[2,fp32,1,1]"
     --net_name=$(name)
