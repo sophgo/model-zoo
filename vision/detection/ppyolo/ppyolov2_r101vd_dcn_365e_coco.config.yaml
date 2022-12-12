@@ -13,7 +13,7 @@ fp_compile_options:
     --input_names "im_shape,image,scale_factor"
     --descs "[0,fp32,640,320],[2,fp32,1,1]"
     --output_names "matrix_nms_0.tmp_0,matrix_nms_0.tmp_2"
-    --target BM1684X
+    --target BM1684
     --enable_profile True
 
 # time_only_cali:
