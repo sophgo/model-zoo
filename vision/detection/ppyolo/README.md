@@ -11,7 +11,7 @@ whose performance(mAP on COCO) and inference spped are better than YOLOv4.
 
 | Model                         | Download                                   | Shape(hw) |
 | ----------------------------- |:------------------------------------------ |:--------- |
-| ppyolov2_r101vd_dcn_365e_coco | [259MB](ppyolov2_r101vd_dcn_365e_coco.zip) | 640 320   |
+| ppyolov2_r101vd_dcn_365e_coco | [259MB](ppyolov2_r101vd_dcn_365e_coco.zip) | 640 640   |
 
 ## Dataset
 
