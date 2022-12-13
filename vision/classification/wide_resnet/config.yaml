@@ -1,0 +1,68 @@
+name: wide_resnet_50_2
+gops: 6.5
+ 
+model: $(home)/wide_resnet_50_2.pb
+ 
+time: true
+precision: true
+ 
+fp_batch_sizes: [1, 2, 4, 8]
+ 
+fp_compile_options:
+  python3 -m bmnett
+  --model $(model)
+  --net_name $(name)
+  --input_names "Placeholder"
+  --shapes [1,224,224,3]
+  --target $(target)
+ 
+cali:
+  python3 -m ufw.cali.cali_model
+    --model=$(model)
+    --input_shapes="[1,224,224,3]"
+    --net_name=$(name)
+    --input_names=Placeholder
+    --output_names=add_16
+    --cali_iterations=5
+    --cali_image_path=$(imagenet2012_cali_set)
+    --cali_image_preprocess='resize_h=224,resize_w=224;mean_value=128:128:128,scale=1,bgr2rgb=True'
+    --target=$(target)
+    --test_iterations=1
+    --debug_cmd="not_suspend;not_call_bmnetu"
+ 
+time_only_cali:
+  python3 -m ufw.cali.cali_model
+    --model=$(model)
+    --input_shapes="[1,224,224,3]"
+    --net_name=$(name)
+    --input_names=Placeholder
+    --output_names=add_16
+    --cali_iterations=1
+    --target=$(target)
+    --test_iterations=1
+    --debug_cmd="not_call_bmnetu;not_suspend;use_fake_data_to_test"
+ 
+int8_model: $(workdir)/$(name)_bmnett_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmnett.int8umodel
+bmnetu_batch_sizes: [1, 2, 4, 8]
+bmnetu_options:
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --target $(target)
+  --cmp False
+  --enable_profile True
+
+dataset:
+  imagedir: $(coco2017_val_set)
+  anno: $(coco2017_anno)/instances_val2017.json
+  mean: [104, 117, 123]
+  scale: 1
+  size: 224
+
+harness:
+  type: topk
+  args:
+    - name: FP32
+      bmodel: $(workdir)/1b.fp32.compilation/compilation.bmodel
+    - name: INT8
+      bmodel: $(workdir)/1b.compilation/compilation.bmodel
