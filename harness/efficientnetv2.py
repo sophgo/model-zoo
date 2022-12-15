@@ -118,14 +118,20 @@ class Runner:
                 raise RuntimeError('File not exist')
             img = cv2.imread(path)
 
+            if self.config.get('bgr2rgb'):
+                img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+
             resized = resize(img, 256)
-            cropped = center_crop(resized, self.size)
+            cropped = center_crop(resized, 224)
+            cropped = resize(cropped, self.size)
             data = cropped.astype(np.float32)
             if 'mean' in self.config:
                 data -= self.config['mean']
             if 'scale' in self.config:
                 data *= self.config['scale']
-            data = data.transpose([2, 0, 1])
+
+            if self.config.get('trans'):
+                data = data.transpose([2, 0, 1])
 
             dtype = np.float32
             if not is_fp32:
@@ -199,13 +205,15 @@ class Runner:
 
 from tpu_perf.harness import harness
 
-@harness('topk')
+@harness('efficientnetv2')
 def harness_main(tree, config, args):
     input_config = config['dataset']
     scale = input_config['scale']
     mean = input_config['mean']
     size = input_config['size']
-    pre_config = dict(mean=mean, scale=scale, size=size)
+    trans = input_config['trans']
+    bgr2rgb = input_config['bgr2rgb']
+    pre_config = dict(mean=mean, scale=scale, size=size, trans=trans, bgr2rgb=bgr2rgb)
     val_path = tree.expand_variables(config, input_config['image_path'])
     list_file = tree.expand_variables(config, input_config['image_label'])
     bmodel = tree.expand_variables(config, args['bmodel'])
@@ -234,6 +242,8 @@ def main():
     parser.add_argument('--threads', type=int, default=4)
     parser.add_argument('--devices', '-d', type=int, nargs='*', help='Devices',
         default=[0])
+    parser.add_argument('--trans', type =str, default=True,help='default True do transpose to align with opencv format')
+    parser.add_argument('--bgr2rgb', type=str, default=True,help="default True to convert image into rgb format")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -242,7 +252,10 @@ def main():
     mean = [float(v) for v in args.mean.split(',')]
     if len(mean) != 3:
         mean = mean[:1] * 3
-    config = dict(mean=mean, scale=args.scale, size=args.size)
+    scale = [float(v) for v in args.scale.split(',')]
+    if len(scale) != 3:
+        scale = scale[:1] * 3
+    config = dict(mean=mean, scale=scale, size=args.size, trans=args.trans, bgr2rgb=args.bgr2rgb)
     print(config)
     runner = Runner(args.bmodel, args.devices, args.image_path, args.list_file, config, args.threads)
     runner.join()

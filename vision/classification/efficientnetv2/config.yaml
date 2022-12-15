@@ -61,7 +61,7 @@ dataset:
   bgr2rgb: True
 
 harness:
-  type: topk
+  type: efficientnetv2
   args:
     - name: FP32
       bmodel: $(workdir)/1b.fp.compilation/compilation.bmodel
