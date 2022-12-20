@@ -4,13 +4,10 @@
 Bert-large-squad from Hugging Face Transformers community.
 [transformers](https://huggingface.co/docs/transformers/index)
 
-
-
 ## Model
-
 |Model                |Download                              |Shape                             |
 |---------------------|:-------------------------------------|:---------------------------------|
-|bert_base_traced.pt  |[436 MB](bert_base_traced.pt)       |(1,384),(1,384),(1,384)           |
+|bert_base_traced.pt  |[436 MB](bert_base_traced.pt)         |(1,384),(1,384),(1,384)           |
 
 ## Dataset
 
@@ -18,7 +15,7 @@ Bert-large-squad from Hugging Face Transformers community.
 
 ## References
 
-* [bert4torch](https://github.com/Tongjilibo/bert4torch)
+* [bert base squadv1](https://github.com/Tongjilibo/bert4torch)
 
 ## License
 
