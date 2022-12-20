@@ -1,0 +1,85 @@
+---
+ 
+name: Huggingface_bert_base-2.11.0
+gops: 65.984
+
+model: $(home)/bert_base_traced-2.11.0.pt
+
+time: true
+precision: true
+
+BM1684X:
+  fp_loops:
+    - build_env: []
+      fp_outdir_template: "{}b.fp32.compilation"
+      prec: FP32
+    - build_env:
+        - BMCOMPILER_LAYER_DTYPE_MODE=bf16
+      fp_outdir_template: "{}b.fp16.compilation"
+      prec: BF16
+  fp_batch_sizes: [1, 2, 4, 8]
+  fp_compile_options:
+    python3 -m bmnetp
+      --model $(model)
+      --descs=[0,int32,0,28990],[1,int32,0,2],[2,int32,0,2]
+      --shapes [1,384],[1,384],[1,384]
+      --cmp=false 
+      --opt=1 
+      --target $(target)
+      --enable_profile=True
+
+  cali:
+    python3 -m ufw.cali.cali_model
+      --model=$(model)
+      --input_shapes="[1,384];[1,384];[1,384]"
+      --net_name=$(name)
+      --cali_iterations=10
+      --input_descs="[0,int32,0,28990];[1,int32,0,2];[2,int32,0,2]"
+      --cali_lmdb $(home)/bert_lmdb/input_mask,$(home)/bert_lmdb/input_ids,$(home)/bert_lmdb/segment_ids
+      --try_cali_accuracy_opt='-fpfwd_inputs=< 0 >30,< 0 0 >52;-th_method=PERCENTILE99999;-float_add_sub=false;-float_after_softmax=false'
+      --target=$(target)
+      --test_iterations=1
+      --postprocess_and_calc_score_class=none
+      --debug_cmd="not_call_bmnetu;not_suspend"
+
+
+  time_only_cali:
+    python3 -m ufw.cali.cali_model
+      --model=$(model)
+      --input_shapes="[1,384];[1,384];[1,384]"
+      --net_name=$(name)
+      --cali_iterations=1
+      --input_descs="[0,int32,0,28990];[1,int32,0,2];[2,int32,0,2]"
+      --cali_lmdb $(home)/bert_lmdb/input_mask,$(home)/bert_lmdb/input_ids,$(home)/bert_lmdb/segment_ids
+      --try_cali_accuracy_opt='-fpfwd_inputs=< 0 >30,< 0 0 >52;-th_method=PERCENTILE99999;-float_add_sub=false;-float_after_softmax=false'
+      --target=$(target)
+      --test_iterations=1
+      --postprocess_and_calc_score_class=none
+      --debug_cmd="not_call_bmnetu;not_suspend"
+  
+  int8_model: $(workdir)/$(name)_bmnetp_deploy_int8_unique_top.prototxt
+  int8_weight: $(workdir)/$(name)_bmnetp.int8umodel
+
+  bmnetu_batch_sizes: [1, 2, 4, 8]
+  bmnetu_options:
+    --model $(int8_model)
+    --weight $(int8_weight)
+    --target $(target)
+    --cmp False
+    --enable_profile True
+    --descs=[0,int32,0,1],[1,int32,0,1],[2,int32,0,1]
+    --opt=1 
+
+
+  harness:
+    type: bert
+    args:
+      - name: FP32
+        bmodel: $(workdir)/1b.fp32.compilation/compilation.bmodel
+      - name: FP16
+        bmodel: $(workdir)/1b.fp16.compilation/compilation.bmodel
+      - name: INT8
+        bmodel: $(workdir)/1b.compilation/compilation.bmodel
+
+val_file: $(root)/dataset/SQuAD/dev-v1.1.json
+val_count: 10833
