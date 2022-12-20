@@ -15,7 +15,7 @@ Bert-large-squad from Hugging Face Transformers community.
 
 ## References
 
-* [bert base squadv1](https://github.com/Tongjilibo/bert4torch)
+* [bert base squadv1](https://github.com/huggingface/transformers)
 
 ## License
 
