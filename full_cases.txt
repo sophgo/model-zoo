@@ -41,3 +41,4 @@ vision/segmentation/deeplabv3p
 vision/segmentation/mobileseg
 language/nlp/bert
 language/asr/conformer
+vision/detection/retinaface
