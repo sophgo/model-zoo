@@ -4,3 +4,4 @@ vision/classification/ResNet50-Caffe
 vision/detection/yolov5
 vision/segmentation/paddle_humansegv1_lite
 vision/reid/market_bot_R50
+language/nlp/Huggingface_bert_base_squadv1

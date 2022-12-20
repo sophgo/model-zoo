@@ -4,3 +4,10 @@ pycocotools
 scikit-learn
 scipy
 torchvision
+tqdm
+json
+six
+transformers==4.23.0
+re
+pickle
+random
