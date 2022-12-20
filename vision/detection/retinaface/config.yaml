@@ -25,7 +25,7 @@ int8_model: $(workdir)/$(name)_bmneto_deploy_int8_unique_top.prototxt
 int8_weight: $(workdir)/$(name)_bmneto.int8umodel
 
 bmnetu_options:
-          --model $(int8_model)
-          --weight $(int8_weight)
-          --target BM1684X
-          --enable_profile True
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --target BM1684X
+  --enable_profile True
