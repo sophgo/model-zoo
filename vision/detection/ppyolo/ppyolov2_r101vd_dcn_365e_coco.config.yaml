@@ -1,7 +1,7 @@
 ---
 
 name: ppyolov2_r101vd_dcn_365e_coco
-gops: 10.21
+gops: 181.97
 
 model: $(home)/ppyolov2_r101vd_dcn_365e_coco/
 

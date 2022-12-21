@@ -1,7 +1,7 @@
 ---
 
 name: ppyoloe_crn_x_300e_coco
-gops: 10.21
+gops: 206.99
 
 model: $(home)/ppyoloe_crn_x_300e_coco/
 

@@ -1,7 +1,7 @@
 ---
 
 name: unet_plusplus
-gops: 10.21
+gops: 375.77
 
 model: $(home)/unet_plusplus_cityscapes/
 

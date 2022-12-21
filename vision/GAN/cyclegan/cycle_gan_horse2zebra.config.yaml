@@ -1,38 +1,38 @@
 ---
 
-name: pp_humanseg_lite_mini
-gops: 0.217
+name: cyclegan_horse2zebra
+gops: 2.78
 
-model: $(home)/pp_humanseg_lite_mini_supervisely/
+model: $(home)/cyclegan_horse2zebra/
 
 fp_compile_options:
   python3 -m bmpaddle
     --model $(model)
-    --shapes [[1,3,192,192]]
+    --shapes [[1,3,40,40]]
     --net_name $(name)
-    --target $(target)
+    --target BM1684X
     --enable_profile True
 
 time_only_cali:
   python3 -m ufw.cali.cali_model
     --model=$(model)/model.pdmodel
-    --input_shapes="[1,3,192,192]"
+    --input_shapes="[1,3,40,40]"
     --net_name=$(name)
     --cali_iterations=1
-    --target=$(target)
+    --target=BM1684X
     --input_name="x"
-    --output_name="argmax_0.tmp_0"
+    --output_name="tanh_3.tmp_0"
     --test_iterations=1
     --debug_cmd="use_fake_data_to_test;not_suspend;not_call_bmnetu"
 
 int8_model: $(workdir)/$(name)_bmpaddle_deploy_int8_unique_top.prototxt
 int8_weight: $(workdir)/$(name)_bmpaddle.int8umodel
 
-bmnetu_batch_sizes: [1, 4]
+bmnetu_batch_sizes: [1]
 bmnetu_options:
   --model $(int8_model)
   --weight $(int8_weight)
-  --target $(target)
+  --target BM1684X
   --enable_profile True
 
 precision: false

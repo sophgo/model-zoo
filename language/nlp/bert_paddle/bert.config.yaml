@@ -1,0 +1,17 @@
+---
+
+name: bert
+gops: 2.73
+
+model: $(home)/bert/
+
+fp_compile_options:
+  python3 -m bmpaddle
+    --model $(model)
+    --shapes [[4,4],[4,4]]
+    --input_names "input_ids,token_type_ids"
+    --descs "[0,int32,0,5],[1,int32,0,2]"
+    --output_names "linear_147.tmp_1"
+    --net_name $(name)
+    --target BM1684
+    --enable_profile True

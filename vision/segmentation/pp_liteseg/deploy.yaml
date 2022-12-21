@@ -1,7 +1,7 @@
 ---
 
 name: pp_liteseg
-gops: 10.21
+gops: 17.94
 
 model: $(home)/pp_liteseg_stdc1_cityscapes/
 

@@ -39,5 +39,7 @@ vision/recognition/facenet
 vision/segmentation/pp_liteseg
 vision/segmentation/deeplabv3p
 vision/segmentation/mobileseg
+vision/GAN/cyclegan
 language/nlp/bert
+language/nlp/bert_paddle
 language/asr/conformer

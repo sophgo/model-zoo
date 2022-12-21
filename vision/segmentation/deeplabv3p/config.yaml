@@ -1,7 +1,7 @@
 ---
 
 name: deeplabv3p
-gops: 10.21
+gops: 181.47
 
 model: $(home)/deeplabv3p_resnet50_os8_cityscapes/
 

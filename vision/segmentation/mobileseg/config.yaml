@@ -1,7 +1,7 @@
 ---
 
 name: mobileseg
-gops: 10.21
+gops: 2.58
 
 model: $(home)/mobileseg_mobilenetv2_cityscapes/
 
