@@ -1,0 +1,44 @@
+---
+
+name: inception_resnet_v2
+gops: 14.31
+
+fp_batch_sizes: [1, 4, 8, 16]
+
+model: $(home)/deploy_inception-resnet-v2.prototxt
+weight: $(home)/inception-resnet-v2.caffemodel
+int8_model: $(workdir)/$(name)_bmnetc_deploy_int8_unique_top.prototxt
+int8_weight: $(workdir)/$(name)_bmnetc.int8umodel
+
+fp_compile_options:
+  bmnetc
+    --model $(model)
+    --weight $(weight)
+    --shapes [1,3,229,229]
+    --net_name $(name)
+    --target BM1684X
+    --enable_profile true
+    --opt 1
+    --cmp 1
+
+time_only_cali:
+  python3 -m ufw.cali.cali_model
+    --model $(model)
+    --weights $(weight)
+    --input_shapes "[1,3,229,229]"
+    --net_name $(name)
+    --test_iterations 1
+    --target BM1684X
+    --cali_iterations 1
+    --debug_cmd "use_fake_data_to_test;not_suspend;not_call_bmnetu"
+
+bmnetu_options:
+  --opt=2
+  --cmp=True
+  --target BM1684X
+  --model $(int8_model)
+  --weight $(int8_weight)
+  --seed 42
+  --enable_profile=True
+
+bmnetu_batch_sizes: [1, 4, 8, 16]
